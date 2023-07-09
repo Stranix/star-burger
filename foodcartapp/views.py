@@ -1,7 +1,6 @@
-import json
-
 from django.http import JsonResponse
 from django.templatetags.static import static
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -66,6 +65,25 @@ def product_list_api(request):
 @api_view(['POST'])
 def register_order(request):
     serialized_order = request.data
+    try:
+        products = serialized_order['products']
+
+        if not isinstance(products, list):
+            return Response(
+                {'error': 'products - must be a list'},
+                status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        if not products:
+            return Response(
+                {'error': 'products - non-empty field'},
+                status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+    except KeyError:
+        return Response(
+            {'error': 'products - required field'},
+            status.HTTP_400_BAD_REQUEST
+        )
 
     order = Order.objects.create(
         address=serialized_order['address'],
@@ -74,10 +92,13 @@ def register_order(request):
         phonenumber=serialized_order['phonenumber'],
     )
 
-    for order_element in serialized_order['products']:
+    for product in products:
+        product_id = product['product']
+        product_quantity = product['quantity']
         OrderElement.objects.create(
             order=order,
-            product=Product.objects.get(pk=order_element['product']),
-            quantity=order_element['quantity'],
+            product=Product.objects.get(pk=product_id),
+            quantity=product_quantity,
         )
-    return Response(serialized_order)
+    return Response(serialized_order, status.HTTP_201_CREATED)
+
