@@ -1,6 +1,6 @@
-import phonenumbers
 from django.http import JsonResponse
 from django.templatetags.static import static
+
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from .models import Product
 from .models import Order
 from .models import OrderElement
+
+from .serializers import OrderSerializer
 
 
 def banners_list_api(request):
@@ -64,82 +66,20 @@ def product_list_api(request):
 
 @api_view(['POST'])
 def register_order(request):
-    serialized_order = request.data
-
-    required_fields = ['products', 'firstname', 'lastname', 'phonenumber',
-                       'address']
-    for field in required_fields:
-        if field not in serialized_order.keys():
-            return Response(
-                {'error': f'{field} - required field'},
-                status.HTTP_406_NOT_ACCEPTABLE
-            )
-
-    order_products = serialized_order['products']
-    first_name = serialized_order['firstname']
-    last_name = serialized_order['lastname']
-    address = serialized_order['address']
-    phonenumber = serialized_order['phonenumber']
-
-    if not isinstance(order_products, list):
-        return Response(
-            {'error': 'products - must be a list'},
-            status.HTTP_422_UNPROCESSABLE_ENTITY
-        )
-
-    if not order_products:
-        return Response(
-            {'error': 'products - non-empty field'},
-            status.HTTP_422_UNPROCESSABLE_ENTITY
-        )
-
-    if not all(list(map(lambda field: isinstance(field, str),
-                        [first_name, last_name, address, phonenumber]))):
-        return Response(
-            {'error': 'fields firstname, lastname, address, '
-                      'phonenumber must be strings'},
-            status=status.HTTP_406_NOT_ACCEPTABLE
-        )
-
-    try:
-        parsed_phonenumber = phonenumbers.parse(phonenumber, "RU")
-    except phonenumbers.phonenumberutil.NumberParseException:
-        return Response(
-            {'error': 'The string supplied did not seem to be a phone number'},
-            status=status.HTTP_406_NOT_ACCEPTABLE
-        )
-
-    if not phonenumbers.is_valid_number(parsed_phonenumber):
-        return Response(
-            {'error': 'invalid phone number'},
-            status=status.HTTP_406_NOT_ACCEPTABLE
-        )
-    formatted_phonenumber = phonenumbers.format_number(
-        parsed_phonenumber,
-        phonenumbers.PhoneNumberFormat.E164
-    )
+    serializer = OrderSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
 
     order = Order.objects.create(
-        address=address,
-        firstname=first_name,
-        lastname=last_name,
-        phonenumber=formatted_phonenumber,
+        firstname=serializer.validated_data['firstname'],
+        lastname=serializer.validated_data['lastname'],
+        phonenumber=serializer.validated_data['phonenumber'],
+        address=serializer.validated_data['address'],
     )
 
-    for product in order_products:
-        product_id = product['product']
-        product_quantity = product['quantity']
-        try:
-            product_instance = Product.objects.get(pk=product_id)
-        except Product.DoesNotExist:
-            return Response(
-                {'error': 'invalid product id'},
-                status=status.HTTP_406_NOT_ACCEPTABLE
-            )
-
+    for product in serializer.validated_data['products']:
         OrderElement.objects.create(
             order=order,
-            product=product_instance,
-            quantity=product_quantity,
+            product=product['product'],
+            quantity=product['quantity'],
         )
-    return Response(serialized_order, status.HTTP_201_CREATED)
+    return Response(serializer.data, status.HTTP_201_CREATED)
