@@ -4,6 +4,9 @@ from django.db.models import Prefetch, Sum, ExpressionWrapper, F
 from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
 
+from geolocation.utils import get_or_create_locations, distance_formatter
+from geopy import distance
+
 
 class Restaurant(models.Model):
     name = models.CharField(
@@ -156,9 +159,28 @@ class OrderQuerySet(models.QuerySet):
                 )
                 order_restaurants.append(product_restaurants)
 
-            if order_restaurants:
-                suitable_restaurants = set.intersection(*order_restaurants)
-                order.suitable_restaurants = suitable_restaurants
+            suitable_restaurants = set.intersection(*order_restaurants)
+
+            for restaurant in suitable_restaurants:
+                order_location, restaurant_location = get_or_create_locations(
+                    order.address, restaurant.address
+                )
+                if not (order_location and restaurant_location):
+                    restaurant.distance = 0
+                    restaurant.readable_distance = 0
+                    continue
+                restaurant.distance = distance.distance(
+                    order_location, restaurant_location
+                ).km
+                restaurant.readable_distance = distance_formatter(
+                    restaurant.distance
+                )
+
+            suitable_restaurants = sorted(
+                suitable_restaurants,
+                key=lambda restaurant: restaurant.distance
+            )
+            order.suitable_restaurants = suitable_restaurants
         return self
 
 
