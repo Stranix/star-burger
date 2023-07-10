@@ -151,6 +151,12 @@ class Order(models.Model):
         ('COMPLETED', 'Завершен'),
     )
 
+    PAYMENT_CHOICES = (
+        ('IMMEDIATE', 'Сразу'),
+        ('BANK_CARD', 'Картой'),
+        ('CASH', 'Наличными'),
+    )
+
     firstname = models.CharField('Имя', max_length=100)
     lastname = models.CharField('Фамилия', max_length=100)
     phonenumber = PhoneNumberField('Номер телефона', db_index=True)
@@ -161,6 +167,14 @@ class Order(models.Model):
         choices=ORDER_STATUS_CHOICES,
         default='NEW',
         db_index=True,
+    )
+
+    payment_method = models.CharField(
+        verbose_name='Способ оплаты',
+        max_length=9,
+        choices=PAYMENT_CHOICES,
+        default='BANK_CARD',
+        db_index=True
     )
     comment = models.TextField(
         'Комментарий',
