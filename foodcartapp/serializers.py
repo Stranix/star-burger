@@ -13,12 +13,22 @@ class OrderElementSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    products = OrderElementSerializer(many=True, allow_empty=False)
+    products = OrderElementSerializer(
+        many=True,
+        allow_empty=False,
+        write_only=True
+    )
 
     class Meta:
         model = Order
-        fields = ['firstname', 'lastname', 'address', 'phonenumber',
-                  'products']
+        fields = [
+            'id',
+            'firstname',
+            'lastname',
+            'address',
+            'phonenumber',
+            'products',
+        ]
 
     def validate_phonenumber(self, value):
         if not phonenumbers.is_valid_number(phonenumbers.parse(value, 'RU')):
