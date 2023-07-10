@@ -155,11 +155,16 @@ class Order(models.Model):
     phonenumber = PhoneNumberField('Номер телефона', db_index=True)
     address = models.CharField('Адрес', max_length=200)
     status = models.CharField(
-        'статус',
+        'Cтатус',
         max_length=11,
         choices=ORDER_STATUS_CHOICES,
         default='NEW',
         db_index=True,
+    )
+    comment = models.TextField(
+        'Комментарий',
+        default='',
+        blank=True,
     )
 
     class Meta:
