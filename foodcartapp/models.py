@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.db.models import Prefetch, Sum, ExpressionWrapper, F
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -124,6 +125,23 @@ class RestaurantMenuItem(models.Model):
         return f"{self.restaurant.name} - {self.product.name}"
 
 
+class OrderQuerySet(models.QuerySet):
+    def fetch_with_price(self):
+        return self.prefetch_related(
+            Prefetch(
+                'orders',
+                queryset=OrderElement.objects.prefetch_related('product')
+            )
+        ).annotate(
+            price=Sum(
+                ExpressionWrapper(
+                    F('orders__product__price') * F('orders__quantity'),
+                    output_field=models.PositiveIntegerField()
+                )
+            )
+        )
+
+
 class Order(models.Model):
     firstname = models.CharField('Имя', max_length=100)
     lastname = models.CharField('Фамилия', max_length=100)
@@ -134,6 +152,8 @@ class Order(models.Model):
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
 
+    objects = OrderQuerySet.as_manager()
+
     def __str__(self):
         return f"{self.lastname} {self.firstname}, {self.address}"
 
@@ -142,13 +162,13 @@ class OrderElement(models.Model):
     order = models.ForeignKey(
         'Order',
         verbose_name='Заказ',
-        related_name='elements',
+        related_name='orders',
         on_delete=models.CASCADE,
     )
     product = models.ForeignKey(
         'Product',
         verbose_name='Товар',
-        related_name='order_elements',
+        related_name='products',
         on_delete=models.CASCADE,
     )
     quantity = models.IntegerField(
