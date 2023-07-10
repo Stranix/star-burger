@@ -143,10 +143,24 @@ class OrderQuerySet(models.QuerySet):
 
 
 class Order(models.Model):
+    ORDER_STATUS_CHOICES = (
+        ('NEW', 'Новый'),
+        ('COLLECT', 'В сборке'),
+        ('IN_DELIVERY', 'У курьера'),
+        ('COMPLETED', 'Завершен'),
+    )
+
     firstname = models.CharField('Имя', max_length=100)
     lastname = models.CharField('Фамилия', max_length=100)
     phonenumber = PhoneNumberField('Номер телефона', db_index=True)
     address = models.CharField('Адрес', max_length=200)
+    status = models.CharField(
+        'статус',
+        max_length=11,
+        choices=ORDER_STATUS_CHOICES,
+        default='NEW',
+        db_index=True,
+    )
 
     class Meta:
         verbose_name = 'Заказ'
