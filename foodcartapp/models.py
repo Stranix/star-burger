@@ -130,17 +130,36 @@ class OrderQuerySet(models.QuerySet):
     def fetch_with_price(self):
         return self.prefetch_related(
             Prefetch(
-                'orders',
+                'products_in_order',
                 queryset=OrderElement.objects.prefetch_related('product')
             )
         ).annotate(
             price=Sum(
                 ExpressionWrapper(
-                    F('orders__price') * F('orders__quantity'),
+                    F('products_in_order__price') * F('products_in_order__quantity'),
                     output_field=models.PositiveIntegerField()
                 )
             )
         )
+
+    def suitable_restaurants(self):
+        restaurant_menu_items = RestaurantMenuItem.objects.select_related(
+            'restaurant', 'product'
+        )
+        for order in self:
+            order_restaurants = []
+            for order_product in order.products_in_order.all():
+                product_restaurants = set(
+                    menu_item.restaurant for menu_item in restaurant_menu_items
+                    if order_product.product == menu_item.product
+                    and menu_item.availability
+                )
+                order_restaurants.append(product_restaurants)
+
+            if order_restaurants:
+                suitable_restaurants = set.intersection(*order_restaurants)
+                order.suitable_restaurants = suitable_restaurants
+        return self
 
 
 class Order(models.Model):
@@ -176,6 +195,15 @@ class Order(models.Model):
         default='BANK_CARD',
         db_index=True
     )
+    restaurant = models.ForeignKey(
+        'Restaurant',
+        on_delete=models.SET_NULL,
+        related_name='orders',
+        verbose_name='ресторан',
+        help_text='ресторан выполнения заказа',
+        blank=True,
+        null=True,
+    )
     comment = models.TextField(
         'Комментарий',
         default='',
@@ -199,11 +227,11 @@ class Order(models.Model):
         db_index=True,
     )
 
+    objects = OrderQuerySet.as_manager()
+
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
-
-    objects = OrderQuerySet.as_manager()
 
     def __str__(self):
         return f"{self.lastname} {self.firstname}, {self.address}"
@@ -213,7 +241,7 @@ class OrderElement(models.Model):
     order = models.ForeignKey(
         'Order',
         verbose_name='Заказ',
-        related_name='orders',
+        related_name='products_in_order',
         on_delete=models.CASCADE,
     )
     product = models.ForeignKey(

@@ -122,6 +122,9 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    list_display = ['id', '__str__', 'phonenumber', 'address', 'status']
+    list_editable = ['status']
+
     inlines = [
         OrderElementInline
     ]
