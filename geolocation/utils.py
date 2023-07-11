@@ -1,17 +1,16 @@
 import requests
 
 from django.conf import settings
-from django.utils import timezone
 from geopy import distance
 
-from .models import Location
+from geolocation.models import Location
 
 
 def fetch_coordinates(address):
     base_url = "https://geocode-maps.yandex.ru/1.x"
     response = requests.get(base_url, params={
         "geocode": address,
-        "apikey": settings.YANDEX_API_KEY,
+        "apikey": settings.YANDEX_GEO_API_KEY,
         "format": "json",
     })
     response.raise_for_status()
@@ -42,23 +41,20 @@ def distance_formatter(distance):
 
 
 def get_or_create_locations(*addresses):
-    print(addresses)
-    locations = []
     existed_locations = {
         location.address: (location.lat, location.lon)
         for location in Location.objects.filter(address__in=addresses)
     }
-    print(existed_locations)
+
     for address in addresses:
         if address in existed_locations.keys():
-            locations.append(existed_locations[address])
-        else:
-            coordinates = fetch_coordinates(address)
-            if not coordinates:
-                locations.append(None)
-                continue
-            lat, lon = coordinates
-            Location.objects.create(address=address, lon=lon, lat=lat, updated_at=timezone.now())
-            locations.append(coordinates)
-    print(locations)
-    return locations
+            continue
+
+        coordinates = fetch_coordinates(address)
+        if not coordinates:
+            continue
+        lat, lon = coordinates
+        location = Location.objects.create(address=address, lon=lon, lat=lat)
+        existed_locations[location.address] = (location.lat, location.lon)
+
+    return existed_locations

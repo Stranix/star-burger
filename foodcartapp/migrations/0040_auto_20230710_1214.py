@@ -5,7 +5,7 @@ from django.db import migrations
 
 def fill_orderproduct_price(apps, schema_editor):
     OrderElement = apps.get_model("foodcartapp", "OrderElement")
-    for order_product in OrderElement.objects.all().iterator():
+    for order_product in OrderElement.objects.iterator():
         order_product.price = order_product.product.price
         order_product.save()
 

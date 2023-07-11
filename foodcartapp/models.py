@@ -4,9 +4,6 @@ from django.db.models import Prefetch, Sum, ExpressionWrapper, F
 from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
 
-from geolocation.utils import get_or_create_locations, distance_formatter
-from geopy import distance
-
 
 class Restaurant(models.Model):
     name = models.CharField(
@@ -149,8 +146,10 @@ class OrderQuerySet(models.QuerySet):
         restaurant_menu_items = RestaurantMenuItem.objects.select_related(
             'restaurant', 'product'
         )
+
         for order in self:
             order_restaurants = []
+
             for order_product in order.products_in_order.all():
                 product_restaurants = set(
                     menu_item.restaurant for menu_item in restaurant_menu_items
@@ -160,27 +159,8 @@ class OrderQuerySet(models.QuerySet):
                 order_restaurants.append(product_restaurants)
 
             suitable_restaurants = set.intersection(*order_restaurants)
-
-            for restaurant in suitable_restaurants:
-                order_location, restaurant_location = get_or_create_locations(
-                    order.address, restaurant.address
-                )
-                if not (order_location and restaurant_location):
-                    restaurant.distance = 0
-                    restaurant.readable_distance = 0
-                    continue
-                restaurant.distance = distance.distance(
-                    order_location, restaurant_location
-                ).km
-                restaurant.readable_distance = distance_formatter(
-                    restaurant.distance
-                )
-
-            suitable_restaurants = sorted(
-                suitable_restaurants,
-                key=lambda restaurant: restaurant.distance
-            )
             order.suitable_restaurants = suitable_restaurants
+
         return self
 
 
@@ -228,7 +208,6 @@ class Order(models.Model):
     )
     comment = models.TextField(
         'Комментарий',
-        default='',
         blank=True,
     )
     created_at = models.DateTimeField(
@@ -275,7 +254,7 @@ class OrderElement(models.Model):
     quantity = models.IntegerField(
         'Количество',
         default=1,
-        validators=[MinValueValidator(0)],
+        validators=[MinValueValidator(1)],
 
     )
 

@@ -17,7 +17,7 @@ DEBUG = env.bool('DEBUG', True)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', ['127.0.0.1', 'localhost'])
 
-YANDEX_API_KEY = env('YANDEX_API_KEY')
+YANDEX_GEO_API_KEY = env('YANDEX_API_KEY')
 
 INSTALLED_APPS = [
     'geolocation.apps.GeolocationConfig',

@@ -1,10 +1,11 @@
 from django.contrib import admin
+from django.conf import settings
 from django.shortcuts import reverse, redirect
 from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from star_burger.settings import ALLOWED_HOSTS
+
 from .models import Product
 from .models import ProductCategory
 from .models import Restaurant
@@ -130,7 +131,12 @@ class OrderAdmin(admin.ModelAdmin):
     ]
 
     def response_change(self, request, obj):
+        super().response_change(request, obj)
         if 'next' not in request.GET:
-            return super().response_change(request, obj)
-        if url_has_allowed_host_and_scheme(request.GET['next'], ALLOWED_HOSTS):
+            return super().response_post_save_change(request, obj)
+
+        if url_has_allowed_host_and_scheme(
+            request.GET['next'],
+            settings.ALLOWED_HOSTS
+        ):
             return redirect(request.GET['next'])

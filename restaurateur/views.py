@@ -1,7 +1,4 @@
-import requests
-
 from django import forms
-from django.conf import settings
 from django.shortcuts import redirect, render
 from django.views import View
 from django.urls import reverse_lazy
@@ -10,10 +7,9 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import views as auth_views
 
-from geopy import distance
-
 from foodcartapp.models import Product, Restaurant
 from foodcartapp.models import Order
+from restaurateur.utils import get_orders_suitable_restaurants_with_locations
 
 
 class Login(forms.Form):
@@ -99,6 +95,9 @@ def view_restaurants(request):
 
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
+    orders = get_orders_suitable_restaurants_with_locations(
+        Order.objects.fetch_with_price().suitable_restaurants()
+    )
     return render(request, template_name='order_items.html', context={
-        'order_items': Order.objects.fetch_with_price().suitable_restaurants()
+        'order_items': orders
     })
