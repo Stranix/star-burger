@@ -45,7 +45,11 @@ def get_or_create_locations(*addresses):
 
         try:
             coordinates = fetch_coordinates(address)
-        except (requests.exceptions.HTTPError, ConnectionError, KeyError):
+        except (
+            requests.exceptions.HTTPError,
+            requests.exceptions.ConnectionError,
+            KeyError,
+        ):
             continue
 
         if not coordinates:
