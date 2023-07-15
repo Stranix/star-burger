@@ -173,6 +173,7 @@ class Order(models.Model):
     )
 
     PAYMENT_CHOICES = (
+        ('NOT_SPECIFIED', 'Не указано'),
         ('IMMEDIATE', 'Сразу'),
         ('BANK_CARD', 'Картой'),
         ('CASH', 'Наличными'),
@@ -192,9 +193,9 @@ class Order(models.Model):
 
     payment_method = models.CharField(
         verbose_name='Способ оплаты',
-        max_length=9,
+        max_length=13,
         choices=PAYMENT_CHOICES,
-        default='BANK_CARD',
+        default='NOT_SPECIFIED',
         db_index=True
     )
     executing_restaurant = models.ForeignKey(
