@@ -25,12 +25,6 @@ def fetch_coordinates(address):
     return lat, lon
 
 
-def get_distance(address_from, address_to):
-    coords_from = fetch_coordinates(address_from)
-    coords_to = fetch_coordinates(address_to)
-    return distance.distance(coords_from, coords_to).km
-
-
 def distance_formatter(distance):
     distance_with_units = f"{int(distance)} км"
     if distance < 10:

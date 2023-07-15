@@ -197,7 +197,7 @@ class Order(models.Model):
         default='BANK_CARD',
         db_index=True
     )
-    restaurant = models.ForeignKey(
+    executing_restaurant = models.ForeignKey(
         'Restaurant',
         on_delete=models.SET_NULL,
         related_name='orders',

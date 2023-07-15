@@ -1,9 +1,9 @@
-import phonenumbers
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
+from phonenumber_field.serializerfields import PhoneNumberField
 
 from .models import Order
 from .models import OrderElement
+from .models import Product
 
 
 class OrderElementSerializer(serializers.ModelSerializer):
@@ -18,6 +18,7 @@ class OrderSerializer(serializers.ModelSerializer):
         allow_empty=False,
         write_only=True
     )
+    phonenumber = PhoneNumberField(region='RU')
 
     class Meta:
         model = Order
@@ -30,7 +31,16 @@ class OrderSerializer(serializers.ModelSerializer):
             'products',
         ]
 
-    def validate_phonenumber(self, value):
-        if not phonenumbers.is_valid_number(phonenumbers.parse(value, 'RU')):
-            raise ValidationError('Не верный номер телефона')
-        return value
+    def create(self, validated_data):
+        order_products_validated_data = validated_data.pop('products')
+        order = Order.objects.create(**validated_data)
+
+        order_products = []
+        for item_payload in order_products_validated_data:
+            item_payload['order'] = order
+            item_payload['price'] = Product.objects.get(
+                name=item_payload['product']
+            ).price
+            order_products.append(OrderElement(**item_payload))
+        OrderElement.objects.bulk_create(order_products)
+        return order
