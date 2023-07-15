@@ -43,9 +43,14 @@ def get_or_create_locations(*addresses):
         if address in existed_locations.keys():
             continue
 
-        coordinates = fetch_coordinates(address)
+        try:
+            coordinates = fetch_coordinates(address)
+        except (requests.exceptions.HTTPError, ConnectionError, KeyError):
+            continue
+
         if not coordinates:
             continue
+
         lat, lon = coordinates
         location = Location.objects.create(address=address, lon=lon, lat=lat)
         existed_locations[location.address] = (location.lat, location.lon)
