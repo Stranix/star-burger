@@ -1,7 +1,6 @@
 import requests
 
 from django.conf import settings
-from geopy import distance
 
 from geolocation.models import Location
 
