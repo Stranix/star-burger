@@ -86,9 +86,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default='sqlite:////{0}'.format(os.path.join(BASE_DIR, 'db.sqlite3'))
-    )
+    'default': dj_database_url.config(default=env.str('DB_URL'))
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -135,7 +133,7 @@ STATICFILES_DIRS = [
 
 ROLLBAR = {
     'access_token': env('ROLLBAR_ACCESS_TOKEN'),
-    'environment': env.str('APP_ENV', 'development'),
+    'environment': env.str('ROLLBAR_ENV', 'development'),
     'code_version': '1.0',
     'root': BASE_DIR,
 }
