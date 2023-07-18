@@ -12,6 +12,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 SECRET_KEY = env('SECRET_KEY')
+
 DEBUG = env.bool('DEBUG', False)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', ['127.0.0.1', 'localhost'])
@@ -118,17 +119,17 @@ USE_L10N = True
 
 USE_TZ = True
 
-STATIC_URL = env.str('STATIC_URL', 'static/')
-STATIC_ROOT = env.str('STATIC_ROOT', os.path.join(BASE_DIR, 'assets/'))
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'bundles'),
+    os.path.join(BASE_DIR, 'assets'),
+]
+
+STATIC_URL = env.str('STATIC_URL', '/static/')
+
+STATIC_ROOT = env.str('STATIC_ROOT', os.path.join(BASE_DIR, 'static'))
 
 INTERNAL_IPS = [
     '127.0.0.1'
-]
-
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, STATIC_URL),
-    os.path.join(BASE_DIR, "bundles"),
 ]
 
 ROLLBAR = {
