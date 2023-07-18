@@ -106,6 +106,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'rollbar.contrib.django_rest_framework.post_exception_handler',
+}
+
 LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'UTC'
