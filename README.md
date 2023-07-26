@@ -148,6 +148,18 @@ Parcel будет следить за файлами в каталоге `bundle
 - `SECRET_KEY` — секретный ключ проекта. Он отвечает за шифрование на сайте. Например, им зашифрованы все пароли на вашем сайте.
 - `ALLOWED_HOSTS` — [см. документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
 - `YANDEX_GEO_API_KEY` — ключ для доступа к геокодеру Яндекса. Подробная инструкция [как получить ключ](https://yandex.ru/dev/maps/geocoder/).
+- `APP_ENV` - в каком окружении работаем. По умолчанию development
+нужна для метки в системе логирования [RollBar](https://rollbar.com/)
+- `ROLLBAR_ACCESS_TOKEN` - токен системы логирования [Rollbar](https://rollbar.com/)
+- `DB_URL` — [URL базы данных](https://github.com/jazzband/dj-database-url#url-schema) вида `postgres://USER:PASSWORD@HOST:PORT/NAME`
+
+## Авто-деплой репозитория
+За автоматический деплой отвечает скрипт `install.sh`.
+Поместите его в корневую папку проекта и запустите командой
+```shell
+./install.sh
+```
+
 
 ## Цели проекта
 
