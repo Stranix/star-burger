@@ -87,7 +87,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 DATABASES = {
-    'default': dj_database_url.config(default=env.str('DB_URL'))
+    'default': dj_database_url.config(default=env.str('DB_URL', 'sqlite:///db.sqlite3'))
 }
 
 AUTH_PASSWORD_VALIDATORS = [
