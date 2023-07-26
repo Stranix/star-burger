@@ -150,8 +150,9 @@ Parcel будет следить за файлами в каталоге `bundle
 - `YANDEX_GEO_API_KEY` — ключ для доступа к геокодеру Яндекса. Подробная инструкция [как получить ключ](https://yandex.ru/dev/maps/geocoder/).
 - `APP_ENV` - в каком окружении работаем. По умолчанию development
 нужна для метки в системе логирования [RollBar](https://rollbar.com/)
-- `ROLLBAR_ACCESS_TOKEN` - токен системы логирования [Rollbar](https://rollbar.com/)
+- `ROLLBAR_ACCESS_TOKEN` - токен системы логирования [Rollbar](https://rollbar.com/). Пустое значение по умолчанию.
 - `DB_URL` — [URL базы данных](https://github.com/jazzband/dj-database-url#url-schema) вида `postgres://USER:PASSWORD@HOST:PORT/NAME`
+по умолчанию сайт запустится с локальной базой `sqlite3` в корне проекта.
 
 ## Авто-деплой репозитория
 За автоматический деплой отвечает скрипт `install.sh`.
@@ -159,6 +160,11 @@ Parcel будет следить за файлами в каталоге `bundle
 ```shell
 ./install.sh
 ```
+Если используется система **RollBar** то необходимо в системе установить переменую окружения `ROLLBAR_POST_ACCESS_TOKEN`
+```shell
+export VAR="ROLLBAR_POST_ACCESS_TOKEN"
+```
+Про токен [тут](https://docs.rollbar.com/reference/post_api-1-project-project-id-access-tokens)
 
 Демо версия сайта: https://smanager.site/
 
