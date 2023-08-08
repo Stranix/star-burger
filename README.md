@@ -58,7 +58,10 @@ pip install -r requirements.txt
 ```sh
 SECRET_KEY=django-insecure-0if40nf4nf93n4
 ```
-
+Перейдите в папку с backend:  
+```sh
+cd backend
+```
 Создайте файл базы данных SQLite и отмигрируйте её следующей командой:
 
 ```sh
@@ -108,13 +111,13 @@ npm ci --dev
 Теперь запустите сборку фронтенда и не выключайте. Parcel будет работать в фоне и следить за изменениями в JS-коде:
 
 ```sh
-./node_modules/.bin/parcel watch bundles-src/index.js --dist-dir bundles --public-url="./"
+./node_modules/.bin/parcel watch frontend/bundles-src/index.js --dist-dir frontend/bundles --public-url="./"
 ```
 
 Если вы на Windows, то вам нужна та же команда, только с другими слешами в путях:
 
 ```sh
-.\node_modules\.bin\parcel watch bundles-src/index.js --dist-dir bundles --public-url="./"
+.\node_modules\.bin\parcel watch frontend/bundles-src/index.js --dist-dir fronend/bundles --public-url="./"
 ```
 
 Дождитесь завершения первичной сборки. Это вполне может занять 10 и более секунд. О готовности вы узнаете по сообщению в консоли:
@@ -123,7 +126,7 @@ npm ci --dev
 ✨  Built in 10.89s
 ```
 
-Parcel будет следить за файлами в каталоге `bundles-src`. Сначала он прочитает содержимое `index.js` и узнает какие другие файлы он импортирует. Затем Parcel перейдёт в каждый из этих подключенных файлов и узнает что импортируют они. И так далее, пока не закончатся файлы. В итоге Parcel получит полный список зависимостей. Дальше он соберёт все эти сотни мелких файлов в большие бандлы `bundles/index.js` и `bundles/index.css`. Они полностью самодостаточны, и потому пригодны для запуска в браузере. Именно эти бандлы сервер отправит клиенту.
+Parcel будет следить за файлами в каталоге `frontend/bundles-src`. Сначала он прочитает содержимое `index.js` и узнает какие другие файлы он импортирует. Затем Parcel перейдёт в каждый из этих подключенных файлов и узнает что импортируют они. И так далее, пока не закончатся файлы. В итоге Parcel получит полный список зависимостей. Дальше он соберёт все эти сотни мелких файлов в большие бандлы `bundles/index.js` и `bundles/index.css`. Они полностью самодостаточны, и потому пригодны для запуска в браузере. Именно эти бандлы сервер отправит клиенту.
 
 Теперь если зайти на страницу  [http://127.0.0.1:8000/](http://127.0.0.1:8000/), то вместо пустой страницы вы увидите:
 
@@ -139,7 +142,7 @@ Parcel будет следить за файлами в каталоге `bundle
 Собрать фронтенд:
 
 ```sh
-./node_modules/.bin/parcel build bundles-src/index.js --dist-dir bundles --public-url="./"
+./node_modules/.bin/parcel build frontend/bundles-src/index.js --dist-dir fronend/bundles --public-url="./"
 ```
 
 Настроить бэкенд: создать файл `.env` в каталоге `star_burger/` со следующими настройками:
