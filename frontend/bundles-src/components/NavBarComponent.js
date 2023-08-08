@@ -11,20 +11,20 @@ class NavBarComponent extends Component{
                 <span className="icon-bar"></span>
                 <span className="icon-bar"></span>
             </button>
-            <a className="navbar-brand" href="#">Star Burger</a>
+            <a className="navbar-brand" href="frontend/bundles-src/components/NavBarComponent#">Star Burger</a>
           </div>
           <div>
             <div className="collapse navbar-collapse" id="myNavbar">
               <ul className="nav navbar-nav">
-                <li><a href="#menu">Меню</a></li>
-                <li><a href="#contact_us">Контакты</a></li>
+                <li><a href="frontend/bundles-src/components/NavBarComponent#menu">Меню</a></li>
+                <li><a href="frontend/bundles-src/components/NavBarComponent#contact_us">Контакты</a></li>
               </ul>
               <ul className="nav navbar-nav navbar-right">
                 <li>
-                  <a href="#">Блюд в заказе: {this.props.totalItems ? <span>{this.props.totalItems}</span> : "" }</a>
+                  <a href="frontend/bundles-src/components/NavBarComponent#">Блюд в заказе: {this.props.totalItems ? <span>{this.props.totalItems}</span> : "" }</a>
                 </li>
                 <li>
-                  <a href="#" className={ this.props.totalAmount ? 'currency' : '' }>Стоимость: {this.props.totalAmount ? <span>{this.props.totalAmount}</span> : "" }</a>
+                  <a href="frontend/bundles-src/components/NavBarComponent#" className={ this.props.totalAmount ? 'currency' : '' }>Стоимость: {this.props.totalAmount ? <span>{this.props.totalAmount}</span> : "" }</a>
                 </li>
                 <li style={{float:'right'}}>
                   <a onClick={this.props.handleCartShow}>

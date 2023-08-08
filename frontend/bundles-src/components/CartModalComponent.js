@@ -31,7 +31,7 @@ class CartModalComponent extends Component{
           <td className="currency">{product.price}</td>
           <td>{product.quantity} шт.</td>
           <td className="currency">{product.quantity * product.price}</td>
-          <td><a href="#" onClick={this.props.removeProduct.bind(this, product.id)}>×</a></td>
+          <td><a href="frontend/bundles-src/components/CartModalComponent#" onClick={this.props.removeProduct.bind(this, product.id)}>×</a></td>
         </tr>
       </CSSTransition>
     ));

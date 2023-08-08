@@ -38,11 +38,11 @@ const BannerComponent = (props) => {
         {carousel_items}
       </div>
 
-      <a className="left carousel-control" href="#myCarousel" data-slide="prev">
+      <a className="left carousel-control" href="frontend/bundles-src/components/BannerComponent#myCarousel" data-slide="prev">
         <span className="glyphicon glyphicon-chevron-left"></span>
         <span className="sr-only">Назад</span>
       </a>
-      <a className="right carousel-control" href="#myCarousel" data-slide="next">
+      <a className="right carousel-control" href="frontend/bundles-src/components/BannerComponent#myCarousel" data-slide="next">
         <span className="glyphicon glyphicon-chevron-right"></span>
         <span className="sr-only">Вперёд</span>
       </a>
