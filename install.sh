@@ -18,13 +18,13 @@ echo -e "Устанавливаем библиотеки для Node.js..."
 npm ci --include=dev
 
 echo -e "Собираем фронтенд..."
-./node_modules/.bin/parcel build bundles-src/index.js --dist-dir bundles --public-url="./"
+./node_modules/.bin/parcel build frontend/bundles-src/index.js --dist-dir frontend/bundles --public-url="./"
 
 echo -e "Собираем статику Django..."
-env/bin/python manage.py collectstatic --no-input
+env/bin/python backend/manage.py collectstatic --no-input
 
 echo -e "Применяем миграции..."
-env/bin/python manage.py migrate --no-input
+env/bin/python backend/manage.py migrate --no-input
 
 echo -e "Перезапускаем сервисы Systemd..."
 systemctl restart star-burger.service
