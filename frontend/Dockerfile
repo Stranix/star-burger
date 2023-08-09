@@ -1,4 +1,4 @@
-FROM node:16.20 AS frontend
+FROM node:16-alpine3.18 as frontend
 
 ENV APP_HOME=/opt/starburger/app
 
