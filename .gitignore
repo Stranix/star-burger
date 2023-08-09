@@ -2,7 +2,6 @@ frontend/bundles/**
 node_modules/
 backend/media/
 static/
-*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
