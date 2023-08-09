@@ -7,10 +7,10 @@ ENV APP_HOME=/opt/starburger/app
 RUN mkdir -p $APP_HOME
 
 WORKDIR $APP_HOME
-COPY requirements.txt requirements.txt
+COPY backend/requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
-COPY . .
+COPY backend/. .
 
 CMD ["gunicorn", "star_burger.wsgi:application", "--bind 0.0.0.0:8000", "--workers 3"]
 

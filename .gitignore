@@ -2,6 +2,7 @@ frontend/bundles/**
 node_modules/
 backend/media/
 static/
+.pg_env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
