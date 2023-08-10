@@ -1,6 +1,7 @@
 # Сайт доставки еды Star Burger
 
-Это сайт сети ресторанов Star Burger. Здесь можно заказать превосходные бургеры с доставкой на дом.
+Это сайт сети ресторанов Star Burger. Здесь можно заказать превосходные бургеры с доставкой на дом.  
+Демо версия сайта: https://stranix.digital/
 
 ![скриншот сайта](https://dvmn.org/filer/canonical/1594651635/686/)
 
@@ -169,7 +170,47 @@ export VAR="ROLLBAR_POST_ACCESS_TOKEN"
 ```
 Про токен [тут](https://docs.rollbar.com/reference/post_api-1-project-project-id-access-tokens)
 
-Демо версия сайта: https://smanager.site/
+
+## Про Docker
+Проект можно запустить prod версию используя Docker compose.  
+Для этого на машине, где планируется запуск должен быть установлен [Docker](https://docs.docker.com/desktop/install/linux-install/)   
+
+Чтобы запустить проект надо:
+1. Скачать репозиторий
+```shell
+git clone https://github.com/Stranix/star-burger.git
+```
+2. Подготовить файлы с переменными окружения
+    - `.env.prod` - Что значит каждый ключ написано чуть выше.  
+    Обязательными являются только `SECRET_KEY`, `DB_URL`
+    ```dotenv
+   SECRET_KEY=Django secret key
+   YANDEX_API_KEY=api yandex location key
+   ALLOWED_HOSTS=Список разрешенный хостов
+   ROLLBAR_ACCESS_TOKEN=rollbar access token
+   ROLLBAR_ENV=production
+   DB_URL=db conn url
+    ```
+    - `.env.prod.db` - **Все значения являются обязательными**
+   ```dotenv
+    POSTGRES_USER=имя пользователя для базы postgres внутри докер контейнера
+    POSTGRES_PASSWORD=пароль от базы данных внутри докер контейнера
+    POSTGRES_NAME=имя базы данных для приложения внутри контейнера
+   ```
+3. Запустить docker compose
+```shell
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+При первом запуске на новой машине необходимо выполнить команду на сбор статики Django внутри контейнера
+```shell
+docker compose -f docker-compose.prod.yml exec web python manage.py collectstatic --no-input --clear
+```
+Применить миграции
+```shell
+docker compose -f docker-compose.prod.yml exec web python manage.py migrate --noinput
+```
+По умолчанию сайт будет запущен с адресом http://localhost:1337/
 
 ## Цели проекта
 
