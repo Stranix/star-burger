@@ -2,7 +2,8 @@ frontend/bundles/**
 node_modules/
 backend/media/
 static/
-.pg_env
+.env.prod 
+.env.prod.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
