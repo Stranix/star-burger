@@ -1,6 +1,6 @@
 FROM node:16-alpine3.18 as frontend
 
-ENV APP_HOME=/opt/starburger/app
+ENV APP_HOME=/user/app/src
 
 RUN mkdir -p $APP_HOME
 

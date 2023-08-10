@@ -153,8 +153,7 @@ class OrderQuerySet(models.QuerySet):
             for order_product in order.products_in_order.all():
                 product_restaurants = set(
                     menu_item.restaurant for menu_item in restaurant_menu_items
-                    if order_product.product == menu_item.product
-                    and menu_item.availability
+                    if order_product.product == menu_item.product and menu_item.availability
                 )
                 order_restaurants.append(product_restaurants)
 
